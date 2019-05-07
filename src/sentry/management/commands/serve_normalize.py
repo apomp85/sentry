@@ -18,7 +18,7 @@ import json
 import resource
 import multiprocessing
 
-from django.core.management.base import BaseCommand, CommandError, make_option
+from django.core.management.base import BaseCommand, CommandError
 from django.utils.encoding import force_str
 
 
@@ -187,16 +187,15 @@ class EventNormalizeHandler(SocketServer.BaseRequestHandler):
 class Command(BaseCommand):
     help = 'Start a socket server for event normalization'
 
-    option_list = BaseCommand.option_list + (
-        make_option('--unix', dest='socket_file',
-                    help='Unix socket to bind to. Example: "/tmp/normalize.sock"'),
-        make_option('--net', dest='network_socket',
-                    help='Network socket to bind to. Example: "127.0.0.1:1234"'),
-        make_option('--threading', action='store_true', dest='threading',
-                    help='Start a threading server'),
-        make_option('--forking', action='store_true', dest='forking',
-                    help='Start a forking server'),
-    )
+    def add_arguments(self, parser):
+        parser.add_argument('--unix', dest='socket_file',
+                            help='Unix socket to bind to. Example: "/tmp/normalize.sock"'),
+        parser.add_argument('--net', dest='network_socket',
+                            help='Network socket to bind to. Example: "127.0.0.1:1234"'),
+        parser.add_argument('--threading', action='store_true', dest='threading',
+                            help='Start a threading server'),
+        parser.add_argument('--forking', action='store_true', dest='forking',
+                            help='Start a forking server'),
 
     def _check_socket_path(self, socket_file):
         if os.path.exists(socket_file):
